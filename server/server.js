@@ -61,6 +61,7 @@ app.get('/health', (req, res) => {
 const authRoutes = require('./routes/auth');
 const albumRoutes = require('./routes/albums');
 const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
 // const reviewRoutes = require('./routes/reviews');
 // const userRoutes = require('./routes/users');
 // const reviewRoutes = require('./routes/reviews');
@@ -68,6 +69,7 @@ const reviewRoutes = require('./routes/reviews');
 app.use('/api/auth', authRoutes);
 app.use('/api/albums', albumRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/reviews', reviewRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/reviews', reviewRoutes);
