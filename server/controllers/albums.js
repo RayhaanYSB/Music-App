@@ -269,9 +269,43 @@ const searchAlbums = async (req, res) => {
   }
 };
 
+// ============================================
+// DEBUG: GET ALL ALBUMS RAW (no pagination)
+// ============================================
+const getAlbumsDebug = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        a.album_id,
+        a.title,
+        a.release_date,
+        a.cover_art_url,
+        a.genre,
+        a.average_rating,
+        a.rating_count,
+        a.created_at,
+        ar.artist_id,
+        ar.name AS artist_name
+      FROM albums a
+      LEFT JOIN artists ar ON a.artist_id = ar.artist_id
+      ORDER BY a.title;
+    `);
+
+    res.json({
+      count: result.rows.length,
+      albums: result.rows,
+    });
+  } catch (error) {
+    console.error('Get albums debug error:', error);
+    res.status(500).json({ error: 'Server error fetching debug albums' });
+  }
+};
+
+
 module.exports = {
   getAllAlbums,
   getAlbumById,
   createAlbum,
-  searchAlbums
+  searchAlbums,
+  getAlbumsDebug,
 };
