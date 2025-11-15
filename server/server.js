@@ -18,7 +18,10 @@ app.use(express.json());
 
 // Enable CORS (allows frontend to communicate with backend)
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite dev server
+    origin: [
+        'http://localhost:5173',
+        'https://music-app-sand-six.vercel.app'  // Add your Vercel URL here
+    ],
     credentials: true
 }));
 
