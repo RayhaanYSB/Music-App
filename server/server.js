@@ -18,7 +18,7 @@ app.use(express.json());
 
 // Enable CORS (allows frontend to communicate with backend)
 app.use(cors({
-    origin: 'http://localhost:3000', // React dev server
+    origin: 'http://localhost:5173', // Vite dev server
     credentials: true
 }));
 
