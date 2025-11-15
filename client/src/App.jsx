@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AlbumDetail from './pages/AlbumDetail';
 import Albums from './pages/Albums';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/albums/:id" element={<AlbumDetail />} />
             <Route path="/albums" element={<Albums />} />
+            <Route path="/profile/:username" element={<Profile />} />
           </Routes>
         </div>
       </Router>
