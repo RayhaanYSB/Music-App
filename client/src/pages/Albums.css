@@ -1,0 +1,105 @@
+.albums-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+}
+
+.albums-page h1 {
+  font-size: 36px;
+  margin-bottom: 30px;
+}
+
+.albums-controls {
+  background-color: #181818;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #282828;
+  border-radius: 6px;
+  background-color: #0f0f0f;
+  color: white;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1db954;
+}
+
+.filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid #282828;
+  border-radius: 6px;
+  background-color: #0f0f0f;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #1db954;
+}
+
+.results-count {
+  color: #b3b3b3;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.loading,
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #b3b3b3;
+  font-size: 18px;
+}
+
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.album-year {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.no-rating {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .albums-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+}
