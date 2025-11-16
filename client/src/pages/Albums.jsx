@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { albumAPI } from '../services/api';
 import './Albums.css';
+import { useAuth } from '../context/AuthContext';
+
 
 const Albums = () => {
   const [albums, setAlbums] = useState([]);
@@ -105,44 +107,94 @@ const Albums = () => {
 
         {/* Albums Grid */}
         {loading ? (
-          <p className="loading">Loading albums...</p>
+            <p className="loading">Loading albums...</p>
         ) : albums.length === 0 ? (
-          <p className="no-results">No albums found. Try a different search or filter.</p>
+            <p className="no-results">No albums found. Try a different search or filter.</p>
         ) : (
-          <div className="albums-grid">
-            {albums.map((album) => (
-              <Link to={`/albums/${album.album_id}`} key={album.album_id} className="album-card">
-                <div className="album-cover">
-                  {album.cover_art_url ? (
-                    <img src={album.cover_art_url} alt={album.title} />
-                  ) : (
-                    <div className="album-cover-placeholder">🎵</div>
-                  )}
-                </div>
-                <div className="album-info">
-                  <h3>{album.title}</h3>
-                  <p className="artist-name">{album.artist_name}</p>
-                  {album.release_date && (
-                    <p className="album-year">
-                      {new Date(album.release_date).getFullYear()}
-                    </p>
-                  )}
-                  {album.rating_count > 0 ? (
-                    <div className="rating">
-                      ⭐ {parseFloat(album.average_rating).toFixed(1)} 
-                      <span className="rating-count">({album.rating_count})</span>
-                    </div>
-                  ) : (
-                    <div className="no-rating">No ratings yet</div>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
+            <div className="albums-grid">
+                {albums.map((album) => (
+                    <AlbumCard key={album.album_id} album={album} />
+                ))}
+            </div>
         )}
       </div>
     </div>
   );
 };
+
+const AlbumCard = ({ album }) => {
+  const { isAuthenticated } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [onRadar, setOnRadar] = useState(false);
+
+  const handleFavorite = async (e) => {
+    e.preventDefault(); // don’t trigger the Link navigation
+    if (!isAuthenticated) return; // later you can show a login modal
+    try {
+      const res = await albumAPI.toggleFavorite(album.album_id);
+      setIsFavorite(res.data.isFavorite);
+    } catch (err) {
+      console.error('Favorite error:', err);
+    }
+  };
+
+  const handleRadar = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) return;
+    try {
+      const res = await albumAPI.toggleRadar(album.album_id);
+      setOnRadar(res.data.onRadar);
+    } catch (err) {
+      console.error('Radar error:', err);
+    }
+  };
+
+  return (
+    <Link to={`/albums/${album.album_id}`} className="album-card">
+      <div className="album-cover">
+        {album.cover_art_url ? (
+          <img src={album.cover_art_url} alt={album.title} />
+        ) : (
+          <div className="album-cover-placeholder">🎵</div>
+        )}
+      </div>
+      <div className="album-info">
+        <h3>{album.title}</h3>
+        <p className="artist-name">{album.artist_name}</p>
+        {album.release_date && (
+          <p className="album-year">
+            {new Date(album.release_date).getFullYear()}
+          </p>
+        )}
+        {album.rating_count > 0 ? (
+          <div className="rating">
+            ⭐ {parseFloat(album.average_rating).toFixed(1)}
+            <span className="rating-count">({album.rating_count})</span>
+          </div>
+        ) : (
+          <div className="no-rating">No ratings yet</div>
+        )}
+
+        {/* NEW: actions row */}
+        <div className="album-actions">
+          <button
+            className={`icon-btn ${isFavorite ? 'active' : ''}`}
+            onClick={handleFavorite}
+          >
+            ⭐
+          </button>
+          <button
+            className={`icon-btn ${onRadar ? 'active' : ''}`}
+            onClick={handleRadar}
+          >
+            📡
+          </button>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+
 
 export default Albums;

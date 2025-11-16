@@ -62,6 +62,28 @@ CREATE TABLE albums (
 );
 
 -- ============================================
+-- FAVORITES (User's favourite albums)
+-- ============================================
+CREATE TABLE favorites (
+    favorite_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    album_id UUID REFERENCES albums(album_id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, album_id)
+);
+
+-- ============================================
+-- RADAR ALBUMS (User's "On My Radar" albums)
+-- ============================================
+CREATE TABLE radar_albums (
+    radar_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    album_id UUID REFERENCES albums(album_id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, album_id)
+);
+
+-- ============================================
 -- SONGS/TRACKS TABLE
 -- ============================================
 CREATE TABLE songs (

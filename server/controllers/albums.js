@@ -301,6 +301,77 @@ const getAlbumsDebug = async (req, res) => {
   }
 };
 
+// ============================================
+// TOGGLE FAVORITE (add/remove from favorites)
+// ============================================
+const toggleFavorite = async (req, res) => {
+  try {
+    const userId = req.user.user_id; // from authenticateToken
+    const { id: albumId } = req.params;
+
+    // Check if already favorited
+    const existing = await pool.query(
+      'SELECT favorite_id FROM favorites WHERE user_id = $1 AND album_id = $2',
+      [userId, albumId]
+    );
+
+    if (existing.rows.length > 0) {
+      // Remove from favorites
+      await pool.query(
+        'DELETE FROM favorites WHERE favorite_id = $1',
+        [existing.rows[0].favorite_id]
+      );
+      return res.json({ isFavorite: false });
+    }
+
+    // Add to favorites
+    await pool.query(
+      'INSERT INTO favorites (user_id, album_id) VALUES ($1, $2)',
+      [userId, albumId]
+    );
+
+    return res.json({ isFavorite: true });
+  } catch (error) {
+    console.error('Toggle favorite error:', error);
+    return res.status(500).json({ error: 'Failed to toggle favorite' });
+  }
+};
+
+// ============================================
+// TOGGLE RADAR (add/remove from "On My Radar")
+// ============================================
+const toggleRadar = async (req, res) => {
+  try {
+    const userId = req.user.user_id; // from authenticateToken
+    const { id: albumId } = req.params;
+
+    const existing = await pool.query(
+      'SELECT radar_id FROM radar_albums WHERE user_id = $1 AND album_id = $2',
+      [userId, albumId]
+    );
+
+    if (existing.rows.length > 0) {
+      // Remove from radar
+      await pool.query(
+        'DELETE FROM radar_albums WHERE radar_id = $1',
+        [existing.rows[0].radar_id]
+      );
+      return res.json({ onRadar: false });
+    }
+
+    // Add to radar
+    await pool.query(
+      'INSERT INTO radar_albums (user_id, album_id) VALUES ($1, $2)',
+      [userId, albumId]
+    );
+
+    return res.json({ onRadar: true });
+  } catch (error) {
+    console.error('Toggle radar error:', error);
+    return res.status(500).json({ error: 'Failed to toggle radar' });
+  }
+};
+
 
 module.exports = {
   getAllAlbums,
@@ -308,4 +379,6 @@ module.exports = {
   createAlbum,
   searchAlbums,
   getAlbumsDebug,
+  toggleFavorite,
+  toggleRadar,
 };

@@ -13,6 +13,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+    const [radar, setRadar] = useState([]);
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -21,28 +23,37 @@ const Profile = () => {
   }, [username]);
 
   const loadProfile = async () => {
-    try {
-      setLoading(true);
-      
-      // Load user profile
-      const profileResponse = await userAPI.getProfile(username);
-      setProfile(profileResponse.data);
-      setIsFollowing(profileResponse.data.isFollowing);
+  try {
+    setLoading(true);
+    
+    // Load user profile
+    const profileResponse = await userAPI.getProfile(username);
+    setProfile(profileResponse.data);
+    setIsFollowing(profileResponse.data.isFollowing);
 
-      // Load user reviews
-      const reviewsResponse = await reviewAPI.getUserReviews(
-        profileResponse.data.user.user_id,
-        { limit: 50 }
-      );
-      setReviews(reviewsResponse.data.reviews);
+    // Load user reviews
+    const reviewsResponse = await reviewAPI.getUserReviews(
+      profileResponse.data.user.user_id,
+      { limit: 50 }
+    );
+    setReviews(reviewsResponse.data.reviews);
 
-    } catch (err) {
-      setError('User not found or error loading profile');
-      console.error('Error loading profile:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Load favourites
+    const favRes = await userAPI.getFavorites(username);
+    setFavorites(favRes.data.favorites || []);
+
+    // Load radar
+    const radarRes = await userAPI.getRadar(username);
+    setRadar(radarRes.data.radar || []);
+
+  } catch (err) {
+    setError('User not found or error loading profile');
+    console.error('Error loading profile:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleFollowToggle = async () => {
     try {
@@ -112,6 +123,10 @@ const Profile = () => {
 
             <div className="profile-stats-row">
               <div className="stat-item">
+                <span className="stat-number">{profile.stats.albumsListened}</span>
+                <span className="stat-label">Albums</span>
+              </div>
+              <div className="stat-item">
                 <span className="stat-number">{profile.stats.reviewCount}</span>
                 <span className="stat-label">Reviews</span>
               </div>
@@ -120,16 +135,20 @@ const Profile = () => {
                 <span className="stat-label">Avg Rating</span>
               </div>
               <div className="stat-item">
-                <span className="stat-number">{profile.stats.albumsListened}</span>
-                <span className="stat-label">Albums Listened</span>
-              </div>
-              <div className="stat-item">
                 <span className="stat-number">{profile.stats.followers}</span>
                 <span className="stat-label">Followers</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">{profile.stats.following}</span>
                 <span className="stat-label">Following</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{favorites.length}</span>
+                <span className="stat-label">Favourites</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{radar.length}</span>
+                <span className="stat-label">Radar</span>
               </div>
             </div>
           </div>
@@ -178,6 +197,97 @@ const Profile = () => {
             </div>
           )}
         </div>
+        
+                {/* Favourites Section */}
+        <div className="profile-reviews">
+          <h2>Favourites ({favorites.length})</h2>
+
+          {favorites.length === 0 ? (
+            <p className="no-reviews">
+              {isOwnProfile
+                ? "You haven't added any favourites yet."
+                : "This user hasn't added any favourites yet."}
+            </p>
+          ) : (
+            <div className="reviews-grid">
+              {favorites.map((album) => (
+                <Link
+                  to={`/albums/${album.album_id}`}
+                  key={album.album_id}
+                  className="review-item"
+                >
+                  <div className="review-album-cover">
+                    {album.cover_art_url ? (
+                      <img src={album.cover_art_url} alt={album.title} />
+                    ) : (
+                      <div className="album-cover-placeholder-small">🎵</div>
+                    )}
+                  </div>
+                  <div className="review-album-info">
+                    <h4>{album.title}</h4>
+                    <p className="review-artist">{album.artist_name}</p>
+                    {album.release_date && (
+                      <p className="review-date">
+                        {new Date(album.release_date).getFullYear()}
+                      </p>
+                    )}
+                    {album.rating_count > 0 && (
+                      <p className="review-date">
+                        ⭐ {parseFloat(album.average_rating).toFixed(1)} ({album.rating_count})
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Radar Section */}
+        <div className="profile-reviews">
+          <h2>On My Radar ({radar.length})</h2>
+
+          {radar.length === 0 ? (
+            <p className="no-reviews">
+              {isOwnProfile
+                ? "You haven't added any albums to your Radar yet."
+                : "This user has no albums on their Radar yet."}
+            </p>
+          ) : (
+            <div className="reviews-grid">
+              {radar.map((album) => (
+                <Link
+                  to={`/albums/${album.album_id}`}
+                  key={album.album_id}
+                  className="review-item"
+                >
+                  <div className="review-album-cover">
+                    {album.cover_art_url ? (
+                      <img src={album.cover_art_url} alt={album.title} />
+                    ) : (
+                      <div className="album-cover-placeholder-small">🎵</div>
+                    )}
+                  </div>
+                  <div className="review-album-info">
+                    <h4>{album.title}</h4>
+                    <p className="review-artist">{album.artist_name}</p>
+                    {album.release_date && (
+                      <p className="review-date">
+                        {new Date(album.release_date).getFullYear()}
+                      </p>
+                    )}
+                    {album.rating_count > 0 && (
+                      <p className="review-date">
+                        ⭐ {parseFloat(album.average_rating).toFixed(1)} ({album.rating_count})
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

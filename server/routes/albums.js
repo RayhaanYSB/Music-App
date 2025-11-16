@@ -8,9 +8,23 @@ const {
   getAllAlbums, 
   getAlbumById, 
   createAlbum,
-  searchAlbums 
+  searchAlbums,
+  getAlbumsDebug,
+  toggleFavorite,
+  toggleRadar,
 } = require('../controllers/albums');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
+
+// ...
+
+// DEBUG route
+router.get('/debug', getAlbumsDebug);
+
+// Toggle favorite (auth required)
+router.post('/:id/favorite', authenticateToken, toggleFavorite);
+
+// Toggle Radar (auth required)
+router.post('/:id/radar', authenticateToken, toggleRadar);
 
 // ============================================
 // PUBLIC ROUTES (no auth required)

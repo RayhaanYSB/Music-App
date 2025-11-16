@@ -10,7 +10,9 @@ const {
   changePassword,
   toggleFollow,
   getFollowers,
-  getFollowing
+  getFollowing,
+  getUserFavorites,
+  getUserRadar,
 } = require('../controllers/users');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
 
@@ -26,6 +28,12 @@ router.get('/:username/followers', getFollowers);
 
 // GET /api/users/:username/following - Get users they follow
 router.get('/:username/following', getFollowing);
+
+// User's favourite albums
+router.get('/:username/favorites', optionalAuth, getUserFavorites);
+
+// User's "On My Radar" albums
+router.get('/:username/radar', optionalAuth, getUserRadar);
 
 // ============================================
 // PROTECTED ROUTES (auth required)

@@ -37,6 +37,12 @@ export const albumAPI = {
   getById: (id) => api.get(`/albums/${id}`),
   create: (albumData) => api.post('/albums', albumData),
   search: (query) => api.get(`/albums/search?q=${query}`),
+
+  // ⭐ NEW: toggle favourite
+  toggleFavorite: (albumId) => api.post(`/albums/${albumId}/favorite`),
+
+  // 📡 NEW: toggle "On My Radar"
+  toggleRadar: (albumId) => api.post(`/albums/${albumId}/radar`),
 };
 
 // Review API calls
@@ -56,6 +62,8 @@ export const userAPI = {
   toggleFollow: (username) => api.post(`/users/${username}/follow`),
   getFollowers: (username) => api.get(`/users/${username}/followers`),
   getFollowing: (username) => api.get(`/users/${username}/following`),
+  getFavorites: (username) => api.get(`/users/${username}/favorites`),
+  getRadar: (username) => api.get(`/users/${username}/radar`),
 };
 
 export default api;

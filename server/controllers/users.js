@@ -327,11 +327,82 @@ const getFollowing = async (req, res) => {
   }
 };
 
+// ============================================
+// GET USER FAVORITE ALBUMS
+// ============================================
+const getUserFavorites = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const result = await pool.query(
+      `
+      SELECT 
+        a.album_id,
+        a.title,
+        a.cover_art_url,
+        a.average_rating,
+        a.rating_count,
+        a.release_date,
+        ar.name AS artist_name
+      FROM favorites f
+      JOIN users u ON f.user_id = u.user_id
+      JOIN albums a ON f.album_id = a.album_id
+      LEFT JOIN artists ar ON a.artist_id = ar.artist_id
+      WHERE u.username = $1
+      ORDER BY f.created_at DESC
+      `,
+      [username]
+    );
+
+    res.json({ favorites: result.rows });
+  } catch (error) {
+    console.error('Get user favorites error:', error);
+    res.status(500).json({ error: 'Server error fetching favorites' });
+  }
+};
+
+// ============================================
+// GET USER RADAR ALBUMS ("On My Radar")
+// ============================================
+const getUserRadar = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const result = await pool.query(
+      `
+      SELECT 
+        a.album_id,
+        a.title,
+        a.cover_art_url,
+        a.average_rating,
+        a.rating_count,
+        a.release_date,
+        ar.name AS artist_name
+      FROM radar_albums r
+      JOIN users u ON r.user_id = u.user_id
+      JOIN albums a ON r.album_id = a.album_id
+      LEFT JOIN artists ar ON a.artist_id = ar.artist_id
+      WHERE u.username = $1
+      ORDER BY r.created_at DESC
+      `,
+      [username]
+    );
+
+    res.json({ radar: result.rows });
+  } catch (error) {
+    console.error('Get user radar error:', error);
+    res.status(500).json({ error: 'Server error fetching radar albums' });
+  }
+};
+
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
   changePassword,
   toggleFollow,
   getFollowers,
-  getFollowing
+  getFollowing,
+  getUserFavorites,
+  getUserRadar
 };
