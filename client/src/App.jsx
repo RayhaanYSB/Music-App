@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import AlbumDetail from './pages/AlbumDetail';
 import Albums from './pages/Albums';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -22,6 +24,14 @@ function App() {
             <Route path="/albums/:id" element={<AlbumDetail />} />
             <Route path="/albums" element={<Albums />} />
             <Route path="/profile/:username" element={<Profile />} />
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </div>
       </Router>
