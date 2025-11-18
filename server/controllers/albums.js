@@ -11,6 +11,9 @@ const getAllAlbums = async (req, res) => {
   try {
     const { search, genre, sort = 'created_at', order = 'DESC', limit = 20, offset = 0 } = req.query;
 
+    // current user id (can be null if not logged in)
+    const userId = req.user ? req.user.user_id : null;
+
     let query = `
       SELECT 
         a.album_id,
@@ -22,14 +25,19 @@ const getAllAlbums = async (req, res) => {
         a.rating_count,
         a.created_at,
         ar.artist_id,
-        ar.name as artist_name
+        ar.name as artist_name,
+        -- new flags
+        CASE WHEN f.favorite_id IS NULL THEN false ELSE true END AS is_favorite,
+        CASE WHEN r.radar_id   IS NULL THEN false ELSE true END AS on_radar
       FROM albums a
-      LEFT JOIN artists ar ON a.artist_id = ar.artist_id
+      LEFT JOIN artists ar      ON a.artist_id = ar.artist_id
+      LEFT JOIN favorites f     ON f.album_id = a.album_id AND f.user_id = $1
+      LEFT JOIN radar_albums r  ON r.album_id = a.album_id AND r.user_id = $1
       WHERE 1=1
     `;
 
-    const queryParams = [];
-    let paramCount = 1;
+    const queryParams = [userId];
+    let paramCount = 2;
 
     // Search by title or artist
     if (search) {

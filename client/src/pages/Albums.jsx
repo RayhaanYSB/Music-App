@@ -124,8 +124,8 @@ const Albums = () => {
 
 const AlbumCard = ({ album }) => {
   const { isAuthenticated } = useAuth();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [onRadar, setOnRadar] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(!!album.is_favorite);
+  const [onRadar, setOnRadar] = useState(!!album.on_radar);
 
   const handleFavorite = async (e) => {
     e.preventDefault(); // don’t trigger the Link navigation
@@ -167,27 +167,43 @@ const AlbumCard = ({ album }) => {
           </p>
         )}
         {album.rating_count > 0 ? (
-          <div className="rating">
-            ⭐ {parseFloat(album.average_rating).toFixed(1)}
-            <span className="rating-count">({album.rating_count})</span>
-          </div>
-        ) : (
-          <div className="no-rating">No ratings yet</div>
-        )}
+            <div className="rating">
+                <span className="rating-star">⭐</span>
+                <span className="rating-score">
+                {parseFloat(album.average_rating).toFixed(1)}
+                </span>
+                <span className="rating-count">({album.rating_count})</span>
+            </div>
+            ) : (
+            <div className="no-rating">No ratings yet</div>
+            )}
+
 
         {/* NEW: actions row */}
         <div className="album-actions">
           <button
-            className={`icon-btn ${isFavorite ? 'active' : ''}`}
+            className={`icon-btn heart-btn ${isFavorite ? 'active' : ''}`}
             onClick={handleFavorite}
-          >
-            ⭐
+            aria-label={isFavorite ? 'Remove from favourites' : 'Add to favourites'}
+        >
+            <img
+                src={isFavorite ? '/icons/Liked_Heart.svg' : '/icons/Unliked_Heart.svg'}
+                alt={isFavorite ? 'Remove from favourites' : 'Add to favourites'}
+                className="heart-icon"
+            />
           </button>
+
+
           <button
-            className={`icon-btn ${onRadar ? 'active' : ''}`}
+            className={`icon-btn radar-btn ${onRadar ? 'active' : ''}`}
             onClick={handleRadar}
+            aria-label={onRadar ? 'Remove from Radar' : 'Add to Radar'}
           >
-            📡
+            <img
+                src={onRadar ? '/icons/Selected_Radar_Lrg.svg' : '/icons/Unselected_Radar_Lrg.svg'}
+                alt={onRadar ? 'Remove from Radar' : 'Add to Radar'}
+                className="radar-icon"
+            />
           </button>
         </div>
       </div>

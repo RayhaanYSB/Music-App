@@ -83,12 +83,89 @@
   margin-top: 5px;
 }
 
+/* Rating / No-rating line – same spacing & height */
+/* Rating / No-rating line – same spacing, cleaner layout */
+.rating,
 .no-rating {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
   margin-top: 10px;
+  min-height: 20px;
 }
+
+/* Rating row on album cards */
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* space between star, score, and count */
+}
+
+/* star */
+.rating-star {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* numeric score */
+.rating-score {
+  color: #1db954;   /* your green */
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* (count) */
+.rating-count {
+  color: #999;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+/* no-rating text */
+.no-rating {
+  font-style: italic;
+  color: #999;
+}
+
+
+
+/* Row that holds heart + radar */
+.album-actions {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;          /* ⬅️ space between heart and radar */
+}
+
+/* Shared styles for both buttons */
+.icon-btn.heart-btn,
+.icon-btn.radar-btn {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.heart-icon,
+.radar-icon {
+  width: 17px !important;
+  height: 17px !important;
+  flex-shrink: 0;
+  object-fit: contain;
+  background-color: transparent;
+}
+
+
+.heart-btn:hover .heart-icon {
+  transform: scale(1.08);
+}
+
+.heart-btn.active .heart-icon {
+  transform: scale(1.05);
+}
+
 
 @media (max-width: 768px) {
   .albums-grid {
